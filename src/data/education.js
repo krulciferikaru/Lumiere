@@ -14,9 +14,4 @@ export const education = [
     school: 'Santo Domingo National Trade School',
     program: 'Junior High School — STE',
   },
-  // {
-  //   period: '2011 — 2017',
-  //   school: 'Malayantoc Elementary School',
-  //   program: 'Primary Education',
-  // },
 ]

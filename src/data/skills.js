@@ -13,7 +13,7 @@ export const skillGroups = [
   },
   {
     title: 'Libraries',
-    skills: ['React', 'ShadCN Ui', 'Tailwind CSS', 'Bootstrap', 'jQuery'],
+    skills: ['React', 'ShadCN UI', 'Tailwind CSS', 'Bootstrap', 'jQuery'],
   },
   {
     title: 'Database',
