@@ -12,7 +12,7 @@ A personal one-page portfolio made in React as a Midterm Lab Project for **ITELE
 - **About** — bio, skills, and education timeline
 - **Experience** — organizations and roles
 - **Projects** — filterable grid (All / UI-UX / Code / Graphic Design) spanning real code projects (with links to GitHub), UI/UX work, and graphic design pieces (posters, banners, social media graphics)
-- **Contact** — social links and a working contact form
+- **Contact** — email and social links
 
 ## Tech Stack
 
