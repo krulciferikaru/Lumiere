@@ -2,7 +2,7 @@
 
 A personal one-page portfolio made in React as a Midterm Lab Project for **ITELEC 4100**.
 
-**Live demo:** [lumiere-nine-iota.vercel.app](https://lumiere-nine-iota.vercel.app/)
+**Live demo:** [https://lumiere-vite-portfolio.vercel.app](https://lumiere-vite-portfolio.vercel.app/)
 
 ![Lumière screenshot](docs/screenshot.png)
 
