@@ -18,8 +18,9 @@ function Navbar({ links }) {
         <button
           type="button"
           onClick={() => handleNavClick('home')}
-          className="font-serif text-xl tracking-tight text-black"
+          className="flex items-center gap-2 font-serif text-xl tracking-tight text-black"
         >
+          <img src="/Lumiere_Logo.svg" alt="" className="h-5 w-5" aria-hidden="true" />
           Lumière
         </button>
 
