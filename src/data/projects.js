@@ -1,0 +1,108 @@
+export const categories = [
+  { key: 'all', label: 'All' },
+  { key: 'uiux', label: 'UI/UX' },
+  { key: 'code', label: 'Code' },
+  { key: 'design', label: 'Graphic Design' },
+]
+
+export const projects = [
+  {
+    id: 'jldesgins-site',
+    title: 'JLDesgins — Portfolio Website',
+    category: ['code', 'uiux'],
+    tags: ['Web Design', 'Frontend'],
+    description:
+      'A dark-themed personal portfolio site built for a Web Applications Development course, featuring Home, About, Services, Works, and Contact pages.',
+  },
+  {
+    id: 'code-placeholder-1',
+    title: 'Code Project — Coming Soon',
+    category: ['code'],
+    tags: ['Placeholder'],
+    description: 'Another project is in the works — details coming soon.',
+  },
+  {
+    id: 'uiux-placeholder-1',
+    title: 'UI/UX Case Study — Coming Soon',
+    category: ['uiux'],
+    tags: ['Placeholder'],
+    description: 'A UI/UX case study is in the works — details coming soon.',
+  },
+  {
+    id: 'only-exception',
+    title: 'You Are My Only Exception',
+    category: ['design'],
+    tags: ['Poster', 'Typography'],
+    description: 'A moody, typography-led poster design inspired by the Paramore song of the same name.',
+  },
+  {
+    id: 'friends',
+    title: 'Friends',
+    category: ['design'],
+    tags: ['Poster', 'Photo Editing'],
+    description: 'A narrative photo composition exploring quiet, cinematic moments between two people.',
+  },
+  {
+    id: 'spiderverse',
+    title: 'Across the Spider-Verse',
+    category: ['design'],
+    tags: ['Poster', 'Fan Art'],
+    description: 'A bold, high-contrast fan poster reimagining the release art for the animated film.',
+  },
+  {
+    id: 'and-if-i-die',
+    title: 'And If I Die',
+    category: ['design'],
+    tags: ['Poster', 'Typography'],
+    description: 'A gritty, type-driven poster built around a Chase Atlantic lyric.',
+  },
+  {
+    id: 'in-love-with-you',
+    title: "I'm In Love With You",
+    category: ['design'],
+    tags: ['Poster', 'Collage'],
+    description: 'A warm, sunset-toned photo collage paired with layered lyric typography.',
+  },
+  {
+    id: 'naoi-rei',
+    title: 'NAOI REI',
+    category: ['design'],
+    tags: ['Social Media', 'Layout'],
+    description: 'A high-energy idol concept graphic combining grainy photo treatment with sharp layout work.',
+  },
+  {
+    id: 'cartethyia',
+    title: 'Cartethyia',
+    category: ['design'],
+    tags: ['Banner', 'Fan Art'],
+    description: 'A soft, ethereal character banner for Wuthering Waves, built around delicate typography.',
+  },
+  {
+    id: 'exaltair',
+    title: 'Exaltair',
+    category: ['design'],
+    tags: ['Banner', 'Fan Art'],
+    description: 'A dramatic character banner for Punishing Gray Raven with elegant serif titling.',
+  },
+  {
+    id: 'everglowing-justice',
+    title: 'Everglowing Justice',
+    category: ['design'],
+    tags: ['Banner', 'Fan Art'],
+    description: 'A high-contrast duotone banner exploring bold display type and halftone texture.',
+  },
+  {
+    id: 'black-shores',
+    title: 'Black Shores',
+    category: ['design'],
+    tags: ['Banner', 'Fan Art'],
+    description: 'A tranquil, storybook-style character banner for Wuthering Waves.',
+  },
+  {
+    id: 'ishmael-parhelion',
+    title: 'Ishmael: Parhelion',
+    category: ['design'],
+    tags: ['Banner', 'Fan Art'],
+    description: 'A sleek sci-fi character banner balancing fine linework with soft gradients.',
+  },
+]
