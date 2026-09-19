@@ -12,7 +12,11 @@ export const skillGroups = [
     skills: ['HTML', 'CSS', 'JavaScript', 'React', 'PHP', 'Python', 'Java', 'C'],
   },
   {
+    title: 'Libraries',
+    skills: ['React', 'ShadCN Ui', 'Tailwind CSS', 'Bootstrap', 'jQuery'],
+  },
+  {
     title: 'Database',
-    skills: ['MySQL', 'Firebase'],
+    skills: ['MySQL', 'Firebase', 'MongoDB'],
   },
 ]
