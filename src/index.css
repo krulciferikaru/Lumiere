@@ -238,32 +238,6 @@ body {
   background-color: #000;
 }
 
-/* ---------- Contact form ---------- */
-
-.form-surface {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 1.25rem;
-  padding: 2rem;
-}
-
-.form-input {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.6rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  padding: 0.65rem 0.9rem;
-  font-size: 0.9rem;
-}
-
-.form-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #fff;
-}
-
 .contact-link {
   display: flex;
   align-items: center;
