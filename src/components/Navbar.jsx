@@ -1,13 +1,12 @@
 import { useState } from 'react'
-import { useActiveSection } from '../hooks/useActiveSection'
 
 function Navbar({ links }) {
   const [isOpen, setIsOpen] = useState(false)
-  const sectionIds = links.map((link) => link.id)
-  const activeId = useActiveSection(sectionIds)
+  const [activeId, setActiveId] = useState(links[0].id)
 
   function handleNavClick(id) {
     setIsOpen(false)
+    setActiveId(id)
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }

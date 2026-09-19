@@ -1,12 +1,11 @@
 import { socials } from '../data/socials'
 import ContactForm from './ContactForm'
-import Reveal from './Reveal'
 
 function Contact() {
   return (
     <section id="contact" className="section-invert px-6 py-28">
       <div className="mx-auto grid max-w-6xl gap-16 md:grid-cols-2">
-        <Reveal>
+        <div>
           <span className="text-sm font-medium uppercase tracking-[0.2em] text-white/40">
             Contact
           </span>
@@ -30,11 +29,9 @@ function Contact() {
               </li>
             ))}
           </ul>
-        </Reveal>
+        </div>
 
-        <Reveal delay={100}>
-          <ContactForm />
-        </Reveal>
+        <ContactForm />
       </div>
     </section>
   )
