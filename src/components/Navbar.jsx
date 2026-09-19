@@ -20,7 +20,7 @@ function Navbar({ links }) {
           onClick={() => handleNavClick('home')}
           className="font-serif text-xl tracking-tight text-black"
         >
-          JL Francisco
+          Lumière
         </button>
 
         <ul className="hidden items-center gap-8 md:flex">

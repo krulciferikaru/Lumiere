@@ -7,7 +7,7 @@ function Footer() {
     <footer className="section-invert border-t border-white/10 px-6 py-8">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
         <p className="text-xs text-white/40">
-          &copy; {new Date().getFullYear()} Jan Lloyd Nathaniel Francisco. All rights reserved.
+          &copy; {new Date().getFullYear()} Lumière — Jan Lloyd Nathaniel Francisco. All rights reserved.
         </p>
         <button
           type="button"
