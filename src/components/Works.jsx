@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { caseStudies } from '../data/caseStudies'
 import { categories, designWorks } from '../data/projects'
+import { socialPosts } from '../data/socialPosts'
 import CaseStudyCard from './CaseStudyCard'
 import DesignTile from './DesignTile'
 import FilterTabs from './FilterTabs'
@@ -35,10 +36,12 @@ function Works() {
   const tabsRef = useRef(null)
 
   const isAll = activeCategory === 'all'
-  const showUiux = activeCategory !== 'design'
-  const showDesign = activeCategory !== 'uiux'
+  const showUiux = isAll || activeCategory === 'uiux'
+  const showDesign = isAll || activeCategory === 'design'
+  const showSocial = isAll || activeCategory === 'social'
   const visibleStudies = isAll ? caseStudies.slice(0, PREVIEW_COUNT) : caseStudies
   const visibleWorks = isAll ? designWorks.slice(0, PREVIEW_COUNT) : designWorks
+  const visiblePosts = isAll ? socialPosts.slice(0, PREVIEW_COUNT) : socialPosts
 
   // "View all" opens that group's tab and brings the tabs back into view
   function viewAll(key) {
@@ -82,6 +85,20 @@ function Works() {
               </div>
               {isAll && designWorks.length > PREVIEW_COUNT && (
                 <ViewAllButton count={designWorks.length} onClick={() => viewAll('design')} />
+              )}
+            </div>
+          )}
+
+          {showSocial && (
+            <div>
+              {isAll && <GroupLabel>Social Media Designs</GroupLabel>}
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {visiblePosts.map((post) => (
+                  <DesignTile key={post.id} work={post} onOpen={setOpenWork} aspect="square" />
+                ))}
+              </div>
+              {isAll && socialPosts.length > PREVIEW_COUNT && (
+                <ViewAllButton count={socialPosts.length} onClick={() => viewAll('social')} />
               )}
             </div>
           )}

@@ -39,7 +39,10 @@ function FilterTabs({ categories, activeCategory, onSelect }) {
             aria-pressed={isActive}
             className="tab-button"
           >
-            <span>{category.label}</span>
+            <span>
+              <span className="sm:hidden">{category.short ?? category.label}</span>
+              <span className="hidden sm:inline">{category.label}</span>
+            </span>
           </button>
         )
       })}

@@ -1,13 +1,18 @@
-function DesignTile({ work, onOpen }) {
+const aspectClasses = {
+  portrait: 'aspect-[3/4]',
+  square: 'aspect-square',
+}
+
+function DesignTile({ work, onOpen, aspect = 'portrait' }) {
   return (
     <button type="button" onClick={() => onOpen(work)} className="design-tile" aria-label={`View ${work.title}`}>
-      {/* Every tile is the same 3:4 frame; the lightbox shows the full, uncropped piece */}
+      {/* Every tile in a group shares one frame; the lightbox shows the full, uncropped piece */}
       <img
         src={work.image}
         alt=""
         loading="lazy"
         decoding="async"
-        className="block aspect-[3/4] w-full object-cover"
+        className={`block w-full object-cover ${aspectClasses[aspect]}`}
         style={{ objectPosition: work.focus }}
       />
       <span className="design-tile-caption">
