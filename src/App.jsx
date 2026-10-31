@@ -1,23 +1,28 @@
-import About from './components/About'
-import Contact from './components/Contact'
-import Experience from './components/Experience'
+import { useEffect } from 'react'
+import { Route, Routes, useLocation } from 'react-router'
 import Footer from './components/Footer'
-import Hero from './components/Hero'
 import Navbar from './components/Navbar'
-import Projects from './components/Projects'
 import { navLinks } from './data/nav'
+import CaseStudy from './pages/CaseStudy'
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
 
 function App() {
+  const { pathname, hash } = useLocation()
+
+  // New page starts at the top, unless it's heading to a section
+  useEffect(() => {
+    if (!hash) window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [pathname, hash])
+
   return (
     <>
       <Navbar links={navLinks} />
-      <main>
-        <Hero />
-        <About />
-        <Experience />
-        <Projects />
-        <Contact />
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/work/:slug" element={<CaseStudy />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
       <Footer />
     </>
   )

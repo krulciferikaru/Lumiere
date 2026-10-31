@@ -1,12 +1,10 @@
 function SkillGroup({ title, skills }) {
   return (
     <div>
-      <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-black/40">
-        {title}
-      </h3>
+      <h3 className="mb-3 font-display text-lg uppercase tracking-wide text-crimson">{title}</h3>
       <div className="flex flex-wrap gap-2">
         {skills.map((skill) => (
-          <span key={skill} className="skill-pill">
+          <span key={skill} className="skill-chip">
             {skill}
           </span>
         ))}

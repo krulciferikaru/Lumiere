@@ -1,54 +1,43 @@
-import { education } from '../data/education'
 import { skillGroups } from '../data/skills'
+import Reveal from './Reveal'
 import SectionHeading from './SectionHeading'
 import SkillGroup from './SkillGroup'
-import TimelineItem from './TimelineItem'
 
 function About() {
   return (
-    <section id="about" className="bg-white px-6 py-28">
+    <section id="about" className="slant-top-reverse bg-ink px-4 pb-28 sm:px-6">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading eyebrow="About Me" title="Designing with intent, building with passion." />
+        <SectionHeading eyebrow="About Me" title="Who I am" tone="dark" />
 
-        <div className="grid gap-16 md:grid-cols-2">
-          <div className="space-y-4 text-base leading-relaxed text-black/70">
+        <div className="grid gap-16 md:grid-cols-[1.2fr_1fr]">
+          <Reveal className="space-y-5 text-base leading-relaxed text-white/80 sm:text-lg">
             <p>
-              Hey there! My name is Jan Lloyd Nathaniel G. Francisco. I'm a graphic designer and
-              web UI/UX designer based in Nueva Ecija, Philippines, currently a 4th-year Information
-              Technology student at Central Luzon State University, majoring in System
-              Development.
+              Hey there! I'm Jan Lloyd Nathaniel G. Francisco, a graphic designer and aspiring UI/UX designer from
+              Nueva Ecija, Philippines. I'm a 4th-year Information Technology student at Central Luzon State
+              University, majoring in System Development.
             </p>
             <p>
-              I began designing in 2023 by creating Discord server banners for friends and my
-              community. What started as a fun way to help gradually became a passion for
-              creating visuals that speak — designs that not only look good, but communicate
-              clearly and mean something.
+              I started designing in 2023, making Discord server banners for friends and my community. It began as a
+              fun way to help out and slowly turned into something I care about: visuals that look good, say something
+              clearly, and mean something.
             </p>
             <p>
-              My work ranges from posters and game character banners to lyric and typography
-              compositions, and lately, web interfaces and code. I enjoy blending aesthetic design
-              with function, experimenting, and connecting with an audience through every project.
+              Most of my work so far is posters, game character banners, and lyric and typography pieces. Lately I've
+              been doing more UI/UX work. I plan and design interfaces in Figma, then build them in React, like the
+              staff dashboard for SWIFT, our capstone billing system.
             </p>
-          </div>
+            <p className="border-l-4 border-crimson pl-5 text-white">
+              I'm currently looking for an internship in UI/UX design, graphic design, frontend development, or a
+              related field. I want somewhere I can put my skills to work, get hands-on experience, and keep learning
+              and growing as both a developer and a designer.
+            </p>
+          </Reveal>
 
-          <div className="grid grid-cols-2 gap-x-8 gap-y-8">
+          <Reveal delay={120} className="grid grid-cols-2 content-start gap-x-8 gap-y-8">
             {skillGroups.map((group) => (
               <SkillGroup key={group.title} title={group.title} skills={group.skills} />
             ))}
-          </div>
-        </div>
-
-        <h3 className="mb-10 mt-24 font-serif text-2xl text-black">Education</h3>
-        <div className="timeline">
-          {education.map((item) => (
-            <TimelineItem
-              key={item.school + item.period}
-              eyebrow={item.period}
-              title={item.school}
-              subtitle={item.program}
-              description={item.description}
-            />
-          ))}
+          </Reveal>
         </div>
       </div>
     </section>

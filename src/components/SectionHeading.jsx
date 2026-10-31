@@ -1,10 +1,17 @@
-function SectionHeading({ eyebrow, title, align = 'left' }) {
-  const alignClass = align === 'center' ? 'text-center items-center' : 'text-left items-start'
+import RansomText from './RansomText'
+
+function SectionHeading({ eyebrow, title, tone = 'light' }) {
+  const eyebrowClass = tone === 'dark' ? 'bg-crimson text-white' : 'bg-ink text-white'
+  const surfaceClass = { light: 'on-light', dark: 'on-dark', red: 'on-red' }[tone]
 
   return (
-    <div className={`mb-12 flex flex-col ${alignClass}`}>
-      <span className="text-sm font-medium uppercase tracking-[0.2em] text-black/40">{eyebrow}</span>
-      <h2 className="mt-2 font-serif text-4xl tracking-tight text-black sm:text-5xl">{title}</h2>
+    <div className={`mb-12 flex flex-col items-start gap-4 ${surfaceClass}`}>
+      <span className={`slash-label ${eyebrowClass}`}>
+        <span>{eyebrow}</span>
+      </span>
+      <h2 className="text-4xl sm:text-5xl lg:text-6xl">
+        <RansomText text={title} />
+      </h2>
     </div>
   )
 }
