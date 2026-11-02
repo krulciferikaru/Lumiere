@@ -1,9 +1,9 @@
-import { Link } from 'react-router'
+import { TransitionLink } from './PageTransition'
 import ArrowIcon from './ArrowIcon'
 
 function CaseStudyCard({ study }) {
   return (
-    <Link to={`/work/${study.slug}`} className="case-card group">
+    <TransitionLink to={`/work/${study.slug}`} label={study.title} className="case-card group">
       <div className="aspect-[16/10] overflow-hidden border-b-3 border-ink bg-paper">
         <img
           src={study.cover}
@@ -27,7 +27,7 @@ function CaseStudyCard({ study }) {
           </span>
         </span>
       </div>
-    </Link>
+    </TransitionLink>
   )
 }
 

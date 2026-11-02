@@ -6,10 +6,14 @@ import CaseStudyCard from './CaseStudyCard'
 import DesignTile from './DesignTile'
 import FilterTabs from './FilterTabs'
 import Lightbox from './Lightbox'
+import Reveal from './Reveal'
 import SectionHeading from './SectionHeading'
 
 // How many items each group shows in the All tab
 const PREVIEW_COUNT = 3
+
+// Cards in a row enter one after another; the stagger repeats per row of three
+const staggerDelay = (index) => (index % 3) * 70
 
 function GroupLabel({ children }) {
   return (
@@ -65,8 +69,10 @@ function Works() {
             <div>
               {isAll && <GroupLabel>UI/UX Design</GroupLabel>}
               <div className={`grid gap-8 md:grid-cols-2 ${visibleStudies.length >= 3 ? 'lg:grid-cols-3' : ''}`}>
-                {visibleStudies.map((study) => (
-                  <CaseStudyCard key={study.slug} study={study} />
+                {visibleStudies.map((study, index) => (
+                  <Reveal key={study.slug} delay={staggerDelay(index)} className="h-full">
+                    <CaseStudyCard study={study} />
+                  </Reveal>
                 ))}
               </div>
               {isAll && caseStudies.length > PREVIEW_COUNT && (
@@ -79,8 +85,10 @@ function Works() {
             <div>
               {isAll && <GroupLabel>Graphic Design</GroupLabel>}
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {visibleWorks.map((work) => (
-                  <DesignTile key={work.id} work={work} onOpen={setOpenWork} />
+                {visibleWorks.map((work, index) => (
+                  <Reveal key={work.id} delay={staggerDelay(index)}>
+                    <DesignTile work={work} onOpen={setOpenWork} />
+                  </Reveal>
                 ))}
               </div>
               {isAll && designWorks.length > PREVIEW_COUNT && (
@@ -93,8 +101,10 @@ function Works() {
             <div>
               {isAll && <GroupLabel>Social Media Designs</GroupLabel>}
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {visiblePosts.map((post) => (
-                  <DesignTile key={post.id} work={post} onOpen={setOpenWork} aspect="square" />
+                {visiblePosts.map((post, index) => (
+                  <Reveal key={post.id} delay={staggerDelay(index)}>
+                    <DesignTile work={post} onOpen={setOpenWork} aspect="square" />
+                  </Reveal>
                 ))}
               </div>
               {isAll && socialPosts.length > PREVIEW_COUNT && (

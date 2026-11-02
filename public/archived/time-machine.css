@@ -1,0 +1,538 @@
+/* Time machine for archived versions (see time-machine.js). Mirrors the live site's calling card,
+   time machine panel, and slab wipe. Everything is prefixed tm- so it can't clash with an archived
+   version's own styles. */
+
+.tm-overlay,
+.tm-fab {
+  --tm-red: #e60012;
+  --tm-ink: #0b0b0b;
+  --tm-ease: cubic-bezier(0.7, 0, 0.25, 1);
+  --tm-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+}
+
+/* ---------- Slab overlay ---------- */
+
+/* Arriving: dark from the first paint and the page hidden until the overlay takes over */
+html.tm-arriving,
+html.tm-arriving body {
+  background: #0b0b0b !important;
+}
+
+.tm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+html.tm-arriving .tm-overlay,
+.tm-overlay.is-covering {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.tm-slab {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  /* The 18deg slant shifts the top and bottom edges sideways by about 0.2 x the screen height,
+     so the overhang grows with height too; otherwise tall phone screens show their corners. */
+  left: calc(-20vw - 25vh);
+  right: calc(-20vw - 25vh);
+  transform: translateX(120%) skewX(-18deg);
+}
+
+.tm-slab-red {
+  background: var(--tm-red);
+}
+.tm-slab-white {
+  background: #fff;
+}
+.tm-slab-ink {
+  background-color: var(--tm-ink);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.2px, transparent 1.6px);
+  background-size: 9px 9px;
+}
+
+/* Arriving: already covered */
+html.tm-arriving .tm-slab {
+  transform: translateX(0) skewX(-18deg);
+}
+
+/* Leaving: red leads, a white edge, then black lands on top */
+.tm-overlay.is-covering .tm-slab {
+  animation: tm-slab-in 600ms var(--tm-ease) both;
+}
+.tm-overlay.is-covering .tm-slab-white {
+  animation-delay: 65ms;
+}
+.tm-overlay.is-covering .tm-slab-ink {
+  animation-delay: 105ms;
+}
+
+/* Revealing: the slabs keep going off the left edge, top one first */
+.tm-overlay.is-revealing .tm-slab {
+  animation: tm-slab-out 640ms var(--tm-ease) both;
+}
+.tm-overlay.is-revealing .tm-slab-ink {
+  animation-delay: 85ms;
+}
+.tm-overlay.is-revealing .tm-slab-white {
+  animation-delay: 125ms;
+}
+.tm-overlay.is-revealing .tm-slab-red {
+  animation-delay: 210ms;
+}
+
+@keyframes tm-slab-in {
+  from {
+    transform: translateX(120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(0) skewX(-18deg);
+  }
+}
+
+@keyframes tm-slab-out {
+  from {
+    transform: translateX(0) skewX(-18deg);
+  }
+  to {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+}
+
+/* ---------- The word on the slab (same cut-out lettering as the live site) ---------- */
+
+.tm-label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  padding: 0 1rem;
+  font-size: min(clamp(3.5rem, 14vw, 8rem), calc(88vw / (var(--chars, 6) * 0.78)));
+  text-align: center;
+  color: #fff;
+  transform: translateY(-50%);
+}
+
+.tm-overlay.is-revealing .tm-label {
+  animation: tm-label-out 300ms ease-in both;
+}
+
+@keyframes tm-label-out {
+  to {
+    opacity: 0;
+    transform: translate(-30%, -50%);
+  }
+}
+
+.tm-ransom {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.35em;
+  row-gap: 0.15em;
+  line-height: 1;
+}
+
+.tm-ransom-word {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tm-ransom-letter {
+  display: inline-block;
+  padding: 0.06em 0.1em;
+  margin: 0 0.02em;
+  font-family: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  text-transform: uppercase;
+  transform: rotate(var(--tilt, 0deg));
+}
+
+.tm-ransom-letter[data-v='0'] {
+  background: #fff;
+  color: var(--tm-ink);
+}
+.tm-ransom-letter[data-v='1'] {
+  background: var(--tm-ink);
+  color: #fff;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  text-transform: none;
+  font-size: 1.12em;
+  padding: 0 0.12em;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+.tm-ransom-letter[data-v='2'] {
+  background: var(--tm-red);
+  color: #fff;
+}
+.tm-ransom-letter[data-v='3'] {
+  background: transparent;
+  color: inherit;
+  font-size: 1.1em;
+}
+
+/* Leaving: each letter slams down a beat after the last */
+.tm-overlay.is-covering .tm-ransom-letter {
+  animation: tm-letter-in 420ms var(--tm-ease-out) both;
+  animation-delay: calc(360ms + var(--i, 0) * 32ms);
+}
+
+@keyframes tm-letter-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.4em) scale(1.9) rotate(calc(var(--tilt, 0deg) - 28deg));
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.92) rotate(calc(var(--tilt, 0deg) + 4deg));
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+
+/* ---------- Floating calling card ---------- */
+
+.tm-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2147482000;
+}
+
+html.tm-arriving .tm-fab {
+  visibility: hidden;
+}
+
+.tm-trigger {
+  display: block;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 700px;
+  animation: tm-float 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes tm-float {
+  to {
+    translate: 0 -5px;
+  }
+}
+
+.tm-card {
+  position: relative;
+  display: block;
+  width: 6.5rem;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border: 2px solid #fff;
+  background: repeating-radial-gradient(circle at 46% 46%, var(--tm-red) 0 0.55rem, var(--tm-ink) 0.55rem 1.1rem);
+  box-shadow: 8px 12px 0 rgba(0, 0, 0, 0.35);
+  transform: rotateX(34deg) rotateZ(-14deg);
+  transition:
+    transform 320ms var(--tm-ease-out),
+    box-shadow 320ms var(--tm-ease-out);
+}
+
+@media (min-width: 640px) {
+  .tm-card {
+    width: 8.5rem;
+  }
+}
+
+.tm-card-slash {
+  position: absolute;
+  left: 18%;
+  top: -20%;
+  width: 0.45rem;
+  height: 140%;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--tm-ink);
+  transform: rotate(38deg);
+}
+
+.tm-card-star {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.8rem 0 0 -0.8rem;
+  background: #fff;
+  mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+  -webkit-mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+}
+
+.tm-card-word {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.2rem;
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--tm-ink);
+  transform: skewX(-12deg);
+}
+
+@media (hover: hover) {
+  .tm-trigger:hover .tm-card {
+    transform: rotateX(18deg) rotateZ(-8deg) translateY(-6px) scale(1.06);
+    box-shadow: 12px 18px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+.tm-trigger:focus-visible {
+  outline: 3px solid var(--tm-red);
+  outline-offset: 4px;
+}
+
+.tm-trigger:focus-visible .tm-card {
+  transform: rotateX(18deg) rotateZ(-8deg) translateY(-6px) scale(1.06);
+}
+
+.tm-trigger:active .tm-card {
+  transform: rotateX(30deg) rotateZ(-12deg) scale(0.95);
+  transition-duration: 90ms;
+}
+
+.tm-trigger[aria-expanded='true'] .tm-card {
+  transform: rotateX(8deg) rotateZ(-4deg) scale(0.92);
+}
+
+/* ---------- Time machine panel ---------- */
+
+.tm-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 1rem);
+  width: min(21rem, calc(100vw - 2rem));
+  box-sizing: border-box;
+  padding: 1.25rem 1.25rem 1.4rem;
+  background:
+    repeating-radial-gradient(circle at 115% 120%, rgba(11, 11, 11, 0.35) 0 1.4rem, transparent 1.4rem 2.8rem),
+    var(--tm-red);
+  border: 3px solid var(--tm-ink);
+  box-shadow: 10px 10px 0 #fff, 10px 10px 0 3px var(--tm-ink);
+  color: #fff;
+  transform-origin: 90% 110%;
+  opacity: 0;
+  transform: translateY(1.5rem) rotate(-12deg) scale(0.55);
+  visibility: hidden;
+  transition:
+    opacity 180ms ease,
+    transform 260ms var(--tm-ease),
+    visibility 0s 260ms;
+}
+
+.tm-panel[data-open='true'] {
+  opacity: 1;
+  transform: rotate(-2deg);
+  visibility: visible;
+  transition:
+    opacity 160ms ease,
+    transform 480ms cubic-bezier(0.2, 1.3, 0.4, 1),
+    visibility 0s;
+}
+
+.tm-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tm-tag {
+  display: inline-block;
+  margin: 0;
+  padding: 0.25rem 0.75rem;
+  background: var(--tm-ink);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: skewX(-12deg);
+}
+
+.tm-tag > span {
+  display: inline-block;
+  transform: skewX(12deg);
+}
+
+.tm-title {
+  margin: 1rem 0 0;
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 1.875rem;
+  font-weight: 400;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.tm-list {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tm-item {
+  opacity: 0;
+  transform: translateX(-1.5rem);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease-in;
+}
+
+.tm-panel[data-open='true'] .tm-item {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 220ms ease,
+    transform 360ms var(--tm-ease-out);
+  transition-delay: calc(160ms + var(--i) * 70ms);
+}
+
+.tm-version {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  background: var(--tm-ink);
+  color: #fff;
+  border: 2px solid var(--tm-ink);
+  font: inherit;
+  text-align: left;
+}
+
+button.tm-version {
+  cursor: pointer;
+  transition:
+    transform 160ms var(--tm-ease-out),
+    box-shadow 160ms var(--tm-ease-out);
+}
+
+@media (hover: hover) {
+  button.tm-version:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 #fff;
+  }
+}
+
+button.tm-version:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 #fff;
+}
+
+button.tm-version:active {
+  transform: scale(0.98);
+}
+
+.tm-version-current {
+  background: transparent;
+  border-color: #fff;
+}
+
+.tm-version-tag {
+  flex-shrink: 0;
+  padding: 0.15rem 0.5rem;
+  background: #fff;
+  color: var(--tm-ink);
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 1rem;
+  text-transform: uppercase;
+  transform: skewX(-12deg);
+}
+
+.tm-version-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tm-version-title {
+  display: block;
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.tm-version-note {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tm-arrow {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.tm-on-air {
+  flex-shrink: 0;
+  padding: 0.15rem 0.45rem;
+  background: #fff;
+  color: var(--tm-red);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: tm-on-air 1.6s ease-in-out infinite;
+}
+
+@keyframes tm-on-air {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-trigger,
+  .tm-on-air {
+    animation: none;
+  }
+  .tm-card,
+  .tm-panel,
+  .tm-item,
+  button.tm-version {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* Phones: on a tall, narrow screen the slanted white slab becomes a big white band that reads as a
+   flash. Drop it and give the black slab a thin white leading edge instead. */
+@media (max-width: 767px) {
+  .tm-slab-white {
+    display: none;
+  }
+  .tm-slab-ink {
+    box-shadow: -5px 0 0 #fff;
+  }
+}
+

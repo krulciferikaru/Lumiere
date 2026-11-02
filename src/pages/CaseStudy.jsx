@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import ArrowIcon from '../components/ArrowIcon'
 import ImagePlaceholder from '../components/ImagePlaceholder'
 import Lightbox from '../components/Lightbox'
+import { TransitionLink } from '../components/PageTransition'
 import Reveal from '../components/Reveal'
 import { caseStudies } from '../data/caseStudies'
 import NotFound from './NotFound'
@@ -42,8 +43,9 @@ function Pager({ prev, next }) {
   return (
     <nav aria-label="More case studies" className="grid border-t-2 border-crimson bg-ink sm:grid-cols-2">
       {prev ? (
-        <Link
+        <TransitionLink
           to={`/work/${prev.slug}`}
+          label={prev.title}
           className="pager-link pager-link-prev flex flex-col gap-1 px-6 py-10 sm:px-10"
         >
           <span className="eyebrow text-white/50">Previous project</span>
@@ -53,13 +55,14 @@ function Pager({ prev, next }) {
             </span>
             Previous: {prev.title}
           </span>
-        </Link>
+        </TransitionLink>
       ) : (
         <span className="hidden sm:block" />
       )}
       {next && (
-        <Link
+        <TransitionLink
           to={`/work/${next.slug}`}
+          label={next.title}
           className="pager-link flex flex-col items-end gap-1 border-t border-white/10 px-6 py-10 text-right sm:border-l sm:border-t-0 sm:px-10"
         >
           <span className="eyebrow text-white/50">Next project</span>
@@ -69,7 +72,7 @@ function Pager({ prev, next }) {
               <ArrowIcon />
             </span>
           </span>
-        </Link>
+        </TransitionLink>
       )}
     </nav>
   )
@@ -90,24 +93,39 @@ function CaseStudy() {
       {/* 1. Project type, title, short description */}
       <header className="relative isolate overflow-hidden bg-ink px-4 pb-24 pt-32 sm:px-6">
         <div
-          className="absolute inset-y-0 right-0 -z-10 w-full bg-crimson [clip-path:polygon(60%_0,100%_0,100%_35%)] lg:[clip-path:polygon(82%_0,100%_0,100%_100%,62%_100%)]"
+          className="stage stage-right absolute inset-y-0 right-0 -z-10 w-full bg-crimson [clip-path:polygon(60%_0,100%_0,100%_35%)] lg:[clip-path:polygon(82%_0,100%_0,100%_100%,62%_100%)]"
+          style={{ '--stage': 0 }}
           aria-hidden="true"
         />
-        <div className="page-enter mx-auto max-w-6xl">
-          <Link to="/#works" className="eyebrow inline-flex items-center gap-2 text-white/60 hover:text-white">
+        {/* Staged entrance: back link, label, title, subtitle, summary, links, each from its own side */}
+        <div className="mx-auto max-w-6xl">
+          <TransitionLink
+            to="/#works"
+            label="Works"
+            className="stage stage-left eyebrow inline-flex items-center gap-2 text-white/60 hover:text-white"
+            style={{ '--stage': 1 }}
+          >
             <ArrowIcon direction="up-left" className="text-sm" />
             All works
-          </Link>
-          <p className="mt-8">
+          </TransitionLink>
+          <p className="stage stage-left mt-8" style={{ '--stage': 1 }}>
             <span className="slash-label bg-crimson text-white">
               <span>{study.kind}</span>
             </span>
           </p>
-          <h1 className="display mt-5 text-[clamp(3.5rem,12vw,8rem)] text-white">{study.title}</h1>
-          <p className="mt-2 font-serif text-2xl italic text-white/80 sm:text-3xl">{study.subtitle}</p>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{study.summary}</p>
+          <h1 className="display mt-5 text-[clamp(3.5rem,12vw,8rem)] text-white">
+            <span className="stage stage-clip" style={{ '--stage': 2 }}>
+              {study.title}
+            </span>
+          </h1>
+          <p className="stage stage-right mt-2 font-serif text-2xl italic text-white/80 sm:text-3xl" style={{ '--stage': 3 }}>
+            {study.subtitle}
+          </p>
+          <p className="stage stage-up mt-6 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg" style={{ '--stage': 4 }}>
+            {study.summary}
+          </p>
           {study.links.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-5">
+            <div className="stage stage-left mt-8 flex flex-wrap gap-5" style={{ '--stage': 5 }}>
               {study.links.map((link) => (
                 <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="btn-slab btn-secondary">
                   <span className="flex items-center gap-2">

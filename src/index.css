@@ -17,6 +17,15 @@
 
 :root {
   --slant: 4vw;
+  --label-start: 360ms; /* when the slab label's first letter lands; keep in sync with PageTransition */
+
+  /* Motion tokens: hover is fastest, scene changes slowest */
+  --dur-hover: 160ms;
+  --dur-press: 110ms;
+  --dur-reveal: 420ms;
+  --dur-menu: 420ms;
+  --stagger: 55ms;
+  --ease-p5: cubic-bezier(0.7, 0, 0.25, 1);
 }
 
 html {
@@ -25,6 +34,9 @@ html {
 }
 
 body {
+  /* Animated elements start scaled, rotated, or offset; never let that widen the page on phones.
+     clip (not hidden) so it doesn't create a scroll container. */
+  overflow-x: clip;
   margin: 0;
   font-family: var(--font-sans);
   background-color: var(--color-ink);
@@ -615,3 +627,1038 @@ section[id] {
     transition-duration: 0ms;
   }
 }
+
+/* ---------- Page transition (Persona-style slab wipe) ---------- */
+
+.p5-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.p5-transition[data-phase='idle'] {
+  visibility: hidden;
+}
+
+/* Block clicks while the page is covered */
+.p5-transition[data-phase='cover'],
+.p5-transition[data-phase='intro'] {
+  pointer-events: auto;
+}
+
+.p5-panel {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  /* The 18deg slant shifts the top and bottom edges sideways by about 0.2 x the screen height,
+     so the overhang grows with height too; otherwise tall phone screens show their corners. */
+  left: calc(-20vw - 25vh);
+  right: calc(-20vw - 25vh);
+  transform: translateX(120%) skewX(-18deg);
+  will-change: transform;
+}
+
+.p5-panel-red {
+  background: var(--color-crimson);
+}
+.p5-panel-white {
+  background: #fff;
+}
+.p5-panel-ink {
+  background: var(--color-ink);
+}
+
+/* Cover: red leads, a white edge, then black lands on top */
+.p5-transition[data-phase='cover'] .p5-panel {
+  animation: p5-slab-in 600ms var(--ease-p5) both;
+}
+.p5-transition[data-phase='cover'] .p5-panel-white {
+  animation-delay: 65ms;
+}
+.p5-transition[data-phase='cover'] .p5-panel-ink {
+  animation-delay: 105ms;
+}
+
+/* The intro starts already covered. Sliding the slabs in would show the page for a moment first. */
+.p5-transition[data-phase='intro'] .p5-panel {
+  transform: translateX(0) skewX(-18deg);
+}
+
+/* Reveal: the same slabs keep going off the left edge, top one first */
+.p5-transition[data-phase='reveal'] .p5-panel {
+  animation: p5-slab-out 640ms cubic-bezier(0.7, 0, 0.25, 1) both;
+}
+.p5-transition[data-phase='reveal'] .p5-panel-ink {
+  animation-delay: 85ms;
+}
+.p5-transition[data-phase='reveal'] .p5-panel-white {
+  animation-delay: 125ms;
+}
+.p5-transition[data-phase='reveal'] .p5-panel-red {
+  animation-delay: 210ms;
+}
+
+@keyframes p5-slab-in {
+  from {
+    transform: translateX(120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(0) skewX(-18deg);
+  }
+}
+
+@keyframes p5-slab-out {
+  from {
+    transform: translateX(0) skewX(-18deg);
+  }
+  to {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+}
+
+/* The Lumière star spins in while the page is covered */
+.p5-transition-star {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5rem;
+  height: 5rem;
+  margin: -2.5rem 0 0 -2.5rem;
+  background: var(--color-crimson);
+  mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+  -webkit-mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+  opacity: 0;
+}
+
+.p5-transition[data-phase='cover'] .p5-transition-star {
+  animation: p5-star-in 360ms 360ms var(--ease-out-quint) both;
+}
+
+.p5-transition[data-phase='reveal'] .p5-transition-star {
+  animation: p5-star-out 160ms ease-in both;
+}
+
+@keyframes p5-star-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-180deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes p5-star-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6) rotate(45deg);
+  }
+}
+
+/* ---------- Phone menu ---------- */
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  overflow: hidden;
+  background: var(--color-ink);
+  clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+  transition:
+    clip-path 380ms cubic-bezier(0.7, 0, 0.25, 1) 120ms,
+    visibility 0s 500ms;
+  visibility: hidden;
+}
+
+.mobile-menu[data-open='true'] {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  visibility: visible;
+  transition:
+    clip-path 420ms cubic-bezier(0.7, 0, 0.25, 1),
+    visibility 0s;
+}
+
+.mobile-menu-slab {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  right: -40%;
+  width: 90%;
+  background: var(--color-crimson);
+  transform: translateX(110%) skewX(-18deg);
+  transition: transform 360ms cubic-bezier(0.7, 0, 0.25, 1);
+}
+
+.mobile-menu[data-open='true'] .mobile-menu-slab {
+  transform: translateX(0) skewX(-18deg);
+  transition-delay: 120ms;
+}
+
+.mobile-menu-item {
+  opacity: 0;
+  transform: translateX(-3rem) skewX(-12deg);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease-in;
+}
+
+.mobile-menu[data-open='true'] .mobile-menu-item {
+  opacity: 1;
+  transform: translateX(0) skewX(-12deg);
+  transition:
+    opacity 260ms ease,
+    transform 420ms var(--ease-out-quint);
+  transition-delay: calc(180ms + var(--i) * 55ms);
+}
+
+.mobile-menu-link {
+  display: inline-block;
+  padding: 0.1rem 0.9rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 13vw, 4rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.mobile-menu-link > span {
+  display: inline-block;
+  transform: skewX(12deg);
+}
+
+.mobile-menu-link[aria-current='true'] {
+  background: #fff;
+  color: var(--color-ink);
+}
+
+.mobile-menu-link:active {
+  background: var(--color-crimson);
+  color: #fff;
+}
+
+html:has(.mobile-menu[data-open='true']) {
+  overflow: hidden;
+}
+
+/* ---------- Heading letters slam in ---------- */
+
+.reveal .ransom-letter {
+  opacity: 0;
+}
+
+.reveal.is-visible .ransom-letter {
+  animation: letter-in 420ms var(--ease-out-quint) both;
+  animation-delay: calc(120ms + var(--i, 0) * 32ms);
+}
+
+@keyframes letter-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.4em) scale(1.9) rotate(calc(var(--tilt, 0deg) - 28deg));
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.92) rotate(calc(var(--tilt, 0deg) + 4deg));
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+
+/* Desktop nav: a quick jolt on hover */
+@media (hover: hover) {
+  .nav-link {
+    transition:
+      color 160ms ease,
+      transform 160ms var(--ease-out-quint);
+  }
+  .nav-link:hover {
+    transform: rotate(-4deg) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p5-transition {
+    display: none;
+  }
+  .mobile-menu,
+  .mobile-menu-slab,
+  .mobile-menu-item {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+  .reveal .ransom-letter,
+  .reveal.is-visible .ransom-letter {
+    opacity: 1;
+    animation: none;
+  }
+  .nav-link:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Transition label: the destination name rides the black slab ---------- */
+
+.p5-transition-label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  padding: 0 1rem;
+  font-size: min(clamp(3.5rem, 14vw, 8rem), calc(88vw / (var(--chars, 6) * 0.78)));
+  text-align: center;
+  color: #fff;
+  transform: translateY(-50%);
+}
+
+/* Same cut-out lettering as the section headings, centred when a long name wraps */
+.p5-transition-label .ransom {
+  justify-content: center;
+}
+
+/* Revealed exactly like a section heading: each letter slams down in place, one after another.
+   Same keyframes, length, and stagger as `.reveal.is-visible .ransom-letter`, starting once the
+   black slab has landed. The cover phase is held long enough for the last letter (see PageTransition). */
+.p5-transition-label .ransom-letter {
+  opacity: 0;
+}
+
+.p5-transition[data-phase='cover'] .p5-transition-label .ransom-letter {
+  animation: letter-in 420ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--label-start) + var(--i, 0) * 32ms);
+}
+
+/* As the slabs leave, the finished word goes with them */
+.p5-transition[data-phase='reveal'] .p5-transition-label .ransom-letter {
+  opacity: 1;
+}
+
+.p5-transition[data-phase='reveal'] .p5-transition-label {
+  animation: p5-label-out 300ms ease-in both;
+}
+
+@keyframes p5-label-out {
+  from {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-30%, -50%);
+  }
+}
+
+/* ---------- Opening sequence (first visit only) ---------- */
+
+.p5-intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.p5-transition[data-phase='reveal'] .p5-intro {
+  animation: intro-out 260ms ease-in both;
+}
+
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+}
+
+.p5-intro-star {
+  width: 4rem;
+  height: 4rem;
+  background: var(--color-crimson);
+  mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+  -webkit-mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+  animation: p5-star-in 420ms 180ms var(--ease-out-quint) both;
+}
+
+.p5-intro-title {
+  position: relative;
+  overflow: hidden;
+  padding: 0 0.15em 0.08em;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 17vw, 10rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: #fff;
+  transform: skewX(-8deg);
+}
+
+.p5-intro-title > span {
+  display: inline-block;
+  animation: clip-rise 560ms 380ms var(--ease-out-quint) both;
+}
+
+/* A red bar cuts under the name */
+.p5-intro-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.1em;
+  background: var(--color-crimson);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: bar-cut 360ms 760ms var(--ease-p5) both;
+}
+
+.p5-intro-role {
+  overflow: hidden;
+}
+
+.p5-intro-role > span {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  background: #fff;
+  color: var(--color-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  animation: slide-from-left 380ms 840ms var(--ease-out-quint) both;
+}
+
+.p5-intro-skip {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 101;
+  animation: fade-in 200ms 300ms both;
+}
+
+/* The end inset is negative so skewed highlights and descenders are never trimmed */
+@keyframes clip-rise {
+  from {
+    clip-path: inset(100% -10% -10% -10%);
+    transform: translateY(35%);
+  }
+  to {
+    clip-path: inset(-10% -10% -10% -10%);
+    transform: none;
+  }
+}
+
+@keyframes bar-cut {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes slide-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-2.5rem);
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(3rem);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fly-in {
+  from {
+    opacity: 0;
+    transform: translate(45%, -25%) scale(1.2);
+  }
+}
+
+/* ---------- Staged entrances (hero, case study header) ---------- */
+/* Each piece comes from its own direction, in order. They hold while the screen is covered. */
+
+.stage {
+  animation-duration: var(--dur-reveal);
+  animation-timing-function: var(--ease-out-quint);
+  animation-fill-mode: both;
+  animation-delay: calc(120ms + var(--stage, 0) * 90ms);
+}
+
+.stage-left {
+  animation-name: slide-from-left;
+}
+.stage-right {
+  animation-name: slide-from-right;
+}
+.stage-up {
+  animation-name: rise;
+}
+.stage-clip {
+  display: block;
+  animation-name: clip-rise;
+  animation-duration: 520ms;
+}
+.stage-fly {
+  animation-name: fly-in;
+  animation-duration: 620ms;
+}
+
+html:is([data-transition='intro'], [data-transition='cover']) .stage {
+  animation-play-state: paused;
+}
+
+/* ---------- Ambient background drift ---------- */
+
+.ambient-drift {
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+.ambient-drift-slow {
+  animation: drift 38s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-4%, 3%, 0);
+  }
+}
+
+html[data-page-hidden='true'] :is(.ambient-drift, .ambient-drift-slow) {
+  animation-play-state: paused;
+}
+
+/* ---------- Calling card slams onto the table ---------- */
+
+.reveal.card-slam {
+  opacity: 0;
+  transform: translateY(-2.5rem) rotate(-9deg) scale(1.1);
+  transition:
+    opacity 200ms ease,
+    transform 560ms cubic-bezier(0.2, 1.35, 0.4, 1);
+}
+
+.reveal.card-slam.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Lightbox exit mirrors its entrance ---------- */
+
+.lightbox.is-closing {
+  animation: lightbox-out 180ms ease-in both;
+}
+
+.lightbox.is-closing::backdrop {
+  animation: backdrop-out 180ms ease-in both;
+}
+
+@keyframes lightbox-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---------- Dossier (About) ---------- */
+
+.dossier {
+  position: relative;
+  background: #fff;
+  color: var(--color-ink);
+  border: 3px solid #fff;
+  box-shadow: 10px 10px 0 var(--color-crimson);
+}
+
+.dossier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.dossier-row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-top: 2px solid rgba(11, 11, 11, 0.1);
+}
+
+.dossier-row dt {
+  padding-top: 0.15rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-crimson);
+}
+
+.dossier-row dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ---------- Keyboard focus matches hover ---------- */
+
+.btn-primary:focus-visible {
+  transform: skewX(-10deg) translate(-2px, -2px);
+  box-shadow: 8px 8px 0 #fff;
+}
+.btn-secondary:focus-visible {
+  transform: skewX(-10deg) translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--color-crimson);
+}
+.case-card:focus-visible {
+  transform: translate(-5px, -5px);
+  box-shadow: 10px 10px 0 var(--color-crimson);
+}
+.case-card:focus-visible .case-card-arrow {
+  transform: translate(3px, -3px);
+}
+.design-tile:focus-visible img {
+  transform: scale(1.04);
+}
+.output-shot:focus-visible {
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 var(--color-crimson);
+}
+.nav-link:focus-visible,
+.tab-button:focus-visible {
+  color: #fff;
+}
+.contact-link:focus-visible {
+  padding-left: 0.5rem;
+}
+.pager-link:focus-visible {
+  background-color: var(--color-crimson);
+}
+.mobile-menu-link:focus-visible {
+  background: var(--color-crimson);
+  color: #fff;
+}
+
+/* On red, a red outline disappears */
+:is(.calling-card, .mobile-menu) :focus-visible,
+:is(.pager-link, .btn-primary):focus-visible {
+  outline-color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .p5-intro,
+  .p5-intro *,
+  .p5-intro-title::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+  .ambient-drift,
+  .ambient-drift-slow {
+    animation: none;
+  }
+  .reveal.card-slam {
+    transform: none;
+    transition: opacity 200ms ease;
+  }
+  .lightbox.is-closing,
+  .lightbox.is-closing::backdrop {
+    animation-duration: 1ms;
+  }
+}
+
+/* ---------- Hero posters tilt toward the mouse ---------- */
+
+.poster-tilt {
+  box-shadow: 10px 10px 0 var(--color-ink);
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-scale, 1));
+  /* Settling back is slower than following, so letting go feels like the card relaxing */
+  transition:
+    transform 480ms var(--ease-out-quint),
+    box-shadow 300ms var(--ease-out-quint);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .hero-poster:hover .poster-tilt {
+    --tilt-scale: 1.05;
+    box-shadow: 18px 18px 0 var(--color-ink);
+    transition:
+      transform 120ms ease-out,
+      box-shadow 200ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-tilt,
+  .hero-poster:hover .poster-tilt {
+    transform: none;
+  }
+}
+
+/* ---------- Hero poster carousel ---------- */
+/* Three spots. Every poster is 44% wide at top-left; the spot's transform places it.
+   Moving between spots is a transform transition with a slight overshoot, so it can be clicked again mid-move. */
+
+.poster-slot {
+  transition: transform 620ms cubic-bezier(0.2, 1.25, 0.35, 1);
+  will-change: transform;
+}
+
+.poster-slot[data-slot='0'] {
+  transform: translate(0, 2.5rem) rotate(-6deg) scale(1.045);
+}
+
+.poster-slot[data-slot='1'] {
+  transform: translate(68%, 0) rotate(3deg);
+}
+
+.poster-slot[data-slot='2'] {
+  transform: translate(127%, 6rem) rotate(8deg) scale(0.955);
+}
+
+/* Front spot on top, the left spot at the back; a hovered poster comes forward */
+.poster-layer[data-slot='0'] {
+  z-index: 10;
+}
+.poster-layer[data-slot='1'] {
+  z-index: 20;
+}
+.poster-layer[data-slot='2'] {
+  z-index: 15;
+}
+
+@media (hover: hover) {
+  .poster-layer:has(.poster-slot:hover) {
+    z-index: 30;
+  }
+}
+
+.poster-slot:active .poster-tilt {
+  --tilt-scale: 0.97;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-slot {
+    transition: none;
+  }
+}
+
+/* ---------- Floating calling card (bottom right, every page) ---------- */
+
+.calling-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  /* Under the nav (50), phone menu (40), and page transition (100) */
+  z-index: 35;
+  pointer-events: none;
+}
+
+.calling-fab > * {
+  pointer-events: auto;
+}
+
+/* Hidden while the intro plays and while the phone menu is open */
+html[data-transition='intro'] .calling-fab,
+html:has(.mobile-menu[data-open='true']) .calling-fab {
+  visibility: hidden;
+}
+
+.calling-fab-button {
+  display: block;
+  margin-left: auto;
+  perspective: 700px;
+  animation: card-float 3.2s ease-in-out infinite alternate;
+}
+
+html[data-page-hidden='true'] .calling-fab-button {
+  animation-play-state: paused;
+}
+
+@keyframes card-float {
+  to {
+    translate: 0 -5px;
+  }
+}
+
+/* The card itself: concentric red and black rings, lying tilted away like a card on a table */
+.calling-fab-card {
+  position: relative;
+  display: block;
+  width: 6.5rem;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border: 2px solid #fff;
+  background: repeating-radial-gradient(
+    circle at 46% 46%,
+    var(--color-crimson) 0 0.55rem,
+    var(--color-ink) 0.55rem 1.1rem
+  );
+  box-shadow: 8px 12px 0 rgba(0, 0, 0, 0.45);
+  transform: rotateX(34deg) rotateZ(-14deg);
+  transition:
+    transform 320ms var(--ease-out-quint),
+    box-shadow 320ms var(--ease-out-quint);
+}
+
+@media (min-width: 640px) {
+  .calling-fab-card {
+    width: 8.5rem;
+  }
+}
+
+/* A white slash across the card */
+.calling-fab-slash {
+  position: absolute;
+  left: 18%;
+  top: -20%;
+  width: 0.45rem;
+  height: 140%;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--color-ink);
+  transform: rotate(38deg);
+}
+
+.calling-fab-star {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.8rem 0 0 -0.8rem;
+  background: #fff;
+  mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+  -webkit-mask: url('/Lumiere_Logo.svg') center / contain no-repeat;
+}
+
+.calling-fab-word {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.2rem;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--color-ink);
+  transform: skewX(-12deg);
+}
+
+/* Hover/focus: the card lifts toward you. Press: it gives. Open: it lies flat, as if picked up. */
+@media (hover: hover) {
+  .calling-fab-button:hover .calling-fab-card {
+    transform: rotateX(18deg) rotateZ(-8deg) translateY(-6px) scale(1.06);
+    box-shadow: 12px 18px 0 rgba(0, 0, 0, 0.4);
+  }
+}
+
+.calling-fab-button:focus-visible .calling-fab-card {
+  transform: rotateX(18deg) rotateZ(-8deg) translateY(-6px) scale(1.06);
+}
+
+.calling-fab-button:active .calling-fab-card {
+  transform: rotateX(30deg) rotateZ(-12deg) scale(0.95);
+  transition-duration: 90ms;
+}
+
+.calling-fab-button[aria-expanded='true'] .calling-fab-card {
+  transform: rotateX(8deg) rotateZ(-4deg) scale(0.92);
+}
+
+/* ---------- The opened card ---------- */
+/* Springs up out of the small card (origin bottom right) and folds back into it.
+   Transitions, not keyframes, so it can be reversed mid-motion. */
+
+.calling-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 1rem);
+  width: min(21rem, calc(100vw - 2rem));
+  padding: 1.25rem 1.25rem 1.4rem;
+  background:
+    repeating-radial-gradient(circle at 115% 120%, rgba(11, 11, 11, 0.35) 0 1.4rem, transparent 1.4rem 2.8rem),
+    var(--color-crimson);
+  border: 3px solid var(--color-ink);
+  box-shadow: 10px 10px 0 #fff;
+  transform-origin: 90% 110%;
+  opacity: 0;
+  transform: translateY(1.5rem) rotate(-12deg) scale(0.55);
+  visibility: hidden;
+  transition:
+    opacity 180ms ease,
+    transform 260ms var(--ease-p5),
+    visibility 0s 260ms;
+}
+
+.calling-panel[data-open='true'] {
+  opacity: 1;
+  transform: rotate(-2deg);
+  visibility: visible;
+  transition:
+    opacity 160ms ease,
+    transform 480ms cubic-bezier(0.2, 1.3, 0.4, 1),
+    visibility 0s;
+}
+
+.calling-panel-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #fff;
+}
+
+/* Links slash in one after another once the card is open */
+.calling-panel-item {
+  opacity: 0;
+  transform: translateX(-1.5rem);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease-in;
+}
+
+.calling-panel[data-open='true'] .calling-panel-item {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 220ms ease,
+    transform 360ms var(--ease-out-quint);
+  transition-delay: calc(160ms + var(--i) * 70ms);
+}
+
+.calling-version {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 0.8rem;
+  background: var(--color-ink);
+  color: #fff;
+  border: 2px solid var(--color-ink);
+  transition:
+    transform var(--dur-hover) var(--ease-out-quint),
+    box-shadow var(--dur-hover) var(--ease-out-quint);
+}
+
+.calling-version-tag {
+  flex-shrink: 0;
+  padding: 0.15rem 0.5rem;
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  text-transform: uppercase;
+  transform: skewX(-12deg);
+}
+
+@media (hover: hover) {
+  button.calling-version:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 #fff;
+  }
+}
+
+button.calling-version:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 #fff;
+}
+
+button.calling-version:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calling-fab-button {
+    animation: none;
+  }
+  .calling-fab-card,
+  .calling-panel,
+  .calling-panel-item,
+  .calling-version {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+  .calling-panel,
+  .calling-panel[data-open='true'] {
+    transform: none;
+  }
+}
+
+/* The version you're on: outlined instead of filled, with a pulsing "on air" tag */
+.calling-version-current {
+  background: transparent;
+  border-color: #fff;
+}
+
+.calling-on-air {
+  flex-shrink: 0;
+  padding: 0.15rem 0.45rem;
+  background: #fff;
+  color: var(--color-crimson);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: on-air 1.6s ease-in-out infinite;
+}
+
+@keyframes on-air {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calling-on-air {
+    animation: none;
+  }
+}
+
+/* Phones: on a tall, narrow screen the slanted white slab becomes a big white band that reads as a
+   flash. Drop it and give the black slab a thin white leading edge instead. */
+@media (max-width: 767px) {
+  .p5-panel-white {
+    display: none;
+  }
+  .p5-panel-ink {
+    box-shadow: -5px 0 0 #fff;
+  }
+}
+

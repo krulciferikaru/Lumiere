@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ArrowIcon from './ArrowIcon'
 
 // `stacked` puts the text under the image, which suits wide screenshots
 function Lightbox({ work, onClose, stacked = false }) {
   const dialogRef = useRef(null)
+  const [closing, setClosing] = useState(false)
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -11,13 +12,35 @@ function Lightbox({ work, onClose, stacked = false }) {
     if (!work && dialog.open) dialog.close()
   }, [work])
 
+  // Play the exit (mirror of the entrance), then actually close
+  function requestClose() {
+    if (closing) return
+    setClosing(true)
+    setTimeout(() => {
+      setClosing(false)
+      onClose()
+    }, 180)
+  }
+
+  // Escape fires "cancel"; take it over so it animates too
+  function handleCancel(event) {
+    event.preventDefault()
+    requestClose()
+  }
+
   // A click on the dialog element itself (not its content) is a click on the backdrop
   function handleClick(event) {
-    if (event.target === dialogRef.current) onClose()
+    if (event.target === dialogRef.current) requestClose()
   }
 
   return (
-    <dialog ref={dialogRef} className="lightbox m-auto" onClose={onClose} onClick={handleClick}>
+    <dialog
+      ref={dialogRef}
+      className={`lightbox m-auto ${closing ? 'is-closing' : ''}`}
+      onClose={onClose}
+      onCancel={handleCancel}
+      onClick={handleClick}
+    >
       {work && (
         <div className={`flex flex-col gap-5 ${stacked ? '' : 'lg:flex-row lg:items-start'}`}>
           <img
@@ -62,7 +85,7 @@ function Lightbox({ work, onClose, stacked = false }) {
                 </div>
               )}
             </div>
-            <button type="button" onClick={onClose} className={`btn-slab btn-secondary ${stacked ? '' : 'mt-6'}`} autoFocus>
+            <button type="button" onClick={requestClose} className={`btn-slab btn-secondary ${stacked ? '' : 'mt-6'}`} autoFocus>
               <span>Close</span>
             </button>
           </div>

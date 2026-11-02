@@ -23,7 +23,7 @@ function RansomText({ text, className = '' }) {
               const { variant, tilt } = styleFor(char, letterIndex)
               letterIndex += 1
               return (
-                <span key={letterIndex} className="ransom-letter" data-v={variant} style={{ '--tilt': `${tilt}deg` }}>
+                <span key={letterIndex} className="ransom-letter" data-v={variant} style={{ '--tilt': `${tilt}deg`, '--i': letterIndex }}>
                   {char}
                 </span>
               )

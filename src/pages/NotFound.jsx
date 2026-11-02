@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { TransitionLink } from '../components/PageTransition'
 import RansomText from '../components/RansomText'
 
 function NotFound() {
@@ -9,9 +9,9 @@ function NotFound() {
           <RansomText text="Page not found" />
         </h1>
         <p className="mt-6 max-w-md text-white/70">This page doesn't exist or has moved.</p>
-        <Link to="/" className="btn-slab btn-primary mt-10">
+        <TransitionLink to="/" label="Home" className="btn-slab btn-primary mt-10">
           <span>Back to home</span>
-        </Link>
+        </TransitionLink>
       </div>
     </main>
   )
